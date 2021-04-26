@@ -1,0 +1,77 @@
+<?php
+
+/*
+ *
+ * ____  _                 _ _______  __
+ * | __ )| | ___   ___   __| |  ___\ \/ /
+ * |  _ \| |/ _ \ / _ \ / _` | |_   \  /
+ * | |_) | | (_) | (_) | (_| |  _|  /  \
+ * |____/|_|\___/ \___/ \__,_|_|   /_/\_\
+ *
+ *
+ * Copyright 2021 InvalidTeam
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ *
+ * @author InvalidTeam
+ * @link https://github.com/InvalidTeam/BloodFX
+ *
+ */
+
+namespace invalidteam\invalidbloodfx;
+
+use JackMD\ConfigUpdater\ConfigUpdater;
+use pocketmine\block\Block;
+use pocketmine\level\particle\DestroyBlockParticle;
+use pocketmine\Player;
+use pocketmine\plugin\PluginBase;
+use pocketmine\Server;
+
+class Main extends PluginBase
+{
+
+    private const CONFIG_VERSION = 1;
+
+    /** @var self $instance */
+    public static $instance;
+
+    public function onLoad() {
+        self::$instance = $this;
+    }
+
+    public function onEnable() {
+        $this->checkConfigs();
+        Server::getInstance()->getPluginManager()->registerEvents(new EventListener(), $this);
+    }
+
+    public function spawnBlood(Player $player) {
+        $min = $this->getConfig()->getNested("particles-count.min");
+        $max = $this->getConfig()->getNested("particles-count.max");
+        $player->getLevel()->addParticle(new DestroyBlockParticle($player->add(mt_rand($min, $max)/100, 1 + mt_rand($min, $max)/100, mt_rand($min, $max)/100), Block::get(Block::REDSTONE_BLOCK)));
+    }
+
+    private function checkConfigs(): void {
+        $this->saveDefaultConfig();
+        if (!$this->getConfig()->exists("particles-count")) {
+            $this->reloadConfig();
+        }
+        if (!is_int($this->getConfig()->getNested("particles-count.min")) || !is_int($this->getConfig()->getNested("particles-count.min"))) {
+            $this->reloadConfig();
+        }
+        if(ConfigUpdater::checkUpdate($this, $this->getConfig(), "config-version", self::CONFIG_VERSION)){
+            $this->reloadConfig();
+        }
+    }
+
+}

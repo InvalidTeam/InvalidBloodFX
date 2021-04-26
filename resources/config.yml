@@ -1,0 +1,12 @@
+---
+# DO NOT EDIT THIS VALUE.
+# ONLY FOR INTERNAL USE.
+config-version: 1
+
+particles-count:
+  # Must be type integer!
+  # min & max cannot be reversed!
+  # Default min is -50
+  min: -50
+  # Default max is 50
+  max: 50

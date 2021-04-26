@@ -1,0 +1,8 @@
+name: InvalidBloodFX
+main: invalidteam\invalidbloodfx\Main
+api: 3.0.0
+version: 1.0
+website: https://github.com/Pedhot-Dev/BloodFX
+author: InvalidTeam
+authors:
+  - PedhotDev
