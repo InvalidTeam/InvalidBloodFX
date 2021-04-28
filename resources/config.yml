@@ -10,3 +10,9 @@ particles-count:
   min: -50
   # Default max is 50
   max: 50
+
+# Perworld particle
+# blacklisted-world:
+#   - world
+#   - lobby
+blacklisted-world: []

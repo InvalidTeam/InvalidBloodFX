@@ -6,3 +6,22 @@ website: https://github.com/Pedhot-Dev/BloodFX
 author: InvalidTeam
 authors:
   - PedhotDev
+
+commands:
+  bloodfx:
+    description: "InvalidBloodFX commands"
+    permission: bloodfx.cmd
+    aliases:
+      - bfx
+
+permissions:
+  bloodfx.cmd:
+    default: op
+    description: "Permission to use all command in InvalidBloodFX"
+    children:
+      bloodfx.cmd.help:
+        description: "Permission to use /bloodfx help command"
+        default: op
+      bloodfx.cmd.reload:
+        description: "Permission to use /bloodfx reload command"
+        default: op

@@ -33,10 +33,13 @@ namespace invalidteam\invalidbloodfx;
 
 use JackMD\ConfigUpdater\ConfigUpdater;
 use pocketmine\block\Block;
+use pocketmine\command\Command;
+use pocketmine\command\CommandSender;
 use pocketmine\level\particle\DestroyBlockParticle;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
+use pocketmine\utils\TextFormat;
 
 class Main extends PluginBase
 {
@@ -55,7 +58,45 @@ class Main extends PluginBase
         Server::getInstance()->getPluginManager()->registerEvents(new EventListener(), $this);
     }
 
+    public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool {
+        if ($command->getName() == "bloodfx") {
+            if (!$sender instanceof Player) {
+                $sender->sendMessage(TextFormat::RED."Usage this command in game!");
+                return true;
+            }
+            if (!$sender->hasPermission("bloodfx.cmd")) {
+                $sender->sendMessage(Server::getInstance()->getLanguage()->translateString(TextFormat::RED . "%commands.generic.permission"));
+                return false;
+            }
+            switch ($args[0]) {
+                case "help":
+                    if (!$sender->hasPermission("bloodfx.cmd.help")) {
+                        $sender->sendMessage(Server::getInstance()->getLanguage()->translateString(TextFormat::RED . "%commands.generic.permission"));
+                        break;
+                    }
+                    $sender->sendMessage("§aInvalidBloodFX help command: \n".
+                    "§a/bloodfx help: §7InvalidBloodFX help\n".
+                    "§a/bloodfx reload: §7Reload Configuration");
+                    break;
+                case "reload":
+                    if (!$sender->hasPermission("bloodfx.cmd.reload")) {
+                        $sender->sendMessage(Server::getInstance()->getLanguage()->translateString(TextFormat::RED . "%commands.generic.permission"));
+                        break;
+                    }
+                    $this->getConfig()->reload();
+                    $this->getConfig()->save();
+                    $sender->sendMessage("§aAll Configuration has been reloaded!");
+                    break;
+                default:
+                    $sender->sendMessage("§cUsage: §7/bloodfx help");
+                    break;
+            }
+        }
+        return true;
+    }
+
     public function spawnBlood(Player $player) {
+        if (!in_array($player->getLevel()->getFolderName(), $this->getConfig()->get("blacklisted-world"))) return;
         $min = $this->getConfig()->getNested("particles-count.min");
         $max = $this->getConfig()->getNested("particles-count.max");
         $player->getLevel()->addParticle(new DestroyBlockParticle($player->add(mt_rand($min, $max)/100, 1 + mt_rand($min, $max)/100, mt_rand($min, $max)/100), Block::get(Block::REDSTONE_BLOCK)));
@@ -63,7 +104,9 @@ class Main extends PluginBase
 
     private function checkConfigs(): void {
         $this->saveDefaultConfig();
-        if (!$this->getConfig()->exists("particles-count")) {
+        $min = $this->getConfig()->getNested("particles-count.min");
+        $max = $this->getConfig()->getNested("particles-count.max");
+        if (!is_int($min) || !is_int($min)) {
             $this->reloadConfig();
         }
         if (!is_int($this->getConfig()->getNested("particles-count.min")) || !is_int($this->getConfig()->getNested("particles-count.min"))) {
