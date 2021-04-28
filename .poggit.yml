@@ -1,0 +1,11 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/InvalidTeam/InvalidBloodFX
+build-by-default: true
+branches:
+- master
+projects:
+  InvalidBloodFX:
+    libs:
+      - src: InvalidTeam/ConfigUpdater/ConfigUpdater
+        version: ^1.1.0
+    path: ""
+...
