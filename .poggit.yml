@@ -5,7 +5,7 @@ branches:
 projects:
   InvalidBloodFX:
     libs:
-      - src: InvalidTeam/ConfigUpdater/ConfigUpdater
+      - src: Ifera/ConfigUpdater/ConfigUpdater
         version: ^1.1.0
     path: ""
 ...
